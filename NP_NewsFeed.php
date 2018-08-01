@@ -21,7 +21,7 @@ class NP_NewsFeed extends NucleusPlugin {
     function getName()    {return 'NewsFeed: Import RSS / XML News feeds in your weblog.'; }
     function getAuthor()  {return '-=Xiffy=- | admun (Edmond Hui)'; }
     function getURL()     {return 'http://xiffy.nl/weblog/'; }
-    function getVersion() {return '0.95'; }
+    function getVersion() {return '0.96'; }
     function getDescription() {
 	return 'Call this to import a newsfeed. Currently all feeds work with the same defaults.';
     }
