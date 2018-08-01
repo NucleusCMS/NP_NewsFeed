@@ -48,17 +48,22 @@ class NP_NewsFeed extends NucleusPlugin {
 	$this->createOption('showFeedNotAvail','Should we give warning to a unavailbale feed?','yesno','yes');
     }
  
-    function doSkinVar($skintype, $newsfeedURL, $what = 1, $amount = 10) {
-	global $manager, $blog, $CONF, $i; 
-	// go get the requested newsfeed.
- 
-	$feed = $this->readFeed($newsfeedURL);
- 
-	$titlediv       = $this->getOption(Titlediv);
-	$linkdiv        = $this->getOption(Linkdiv);
-	$descriptiondiv = $this->getOption(Descriptiondiv);
-	$target         = $this->getOption(target);
-	$linktext       = $this->getOption(linktext);
+    function doSkinVar($skintype) {
+    	// Warning: Declaration of NP_NewsFeed::doSkinVar() should be compatible with NucleusPlugin::doSkinVar()
+		global $manager, $blog, $CONF, $i; 
+		// go get the requested newsfeed.
+		$params = func_get_args();
+		$newsfeedURL = $params[1];
+		$what        = isset($params[2]) ? $params[2] : 1;
+		$amount      = isset($params[3]) ? $params[3] : 10;
+
+		$feed = $this->readFeed($newsfeedURL);
+
+		$titlediv       = $this->getOption('Titlediv');
+		$linkdiv        = $this->getOption('Linkdiv');
+		$descriptiondiv = $this->getOption('Descriptiondiv');
+		$target         = $this->getOption('target');
+		$linktext       = $this->getOption('linktext');
  
 	if (!$feed)
 	{
