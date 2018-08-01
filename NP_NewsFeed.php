@@ -64,61 +64,61 @@ class NP_NewsFeed extends NucleusPlugin {
 		$descriptiondiv = $this->getOption('Descriptiondiv');
 		$target         = $this->getOption('target');
 		$linktext       = $this->getOption('linktext');
- 
-	if (!$feed)
-	{
-	    if ($this->getOption('showFeedNotAvail') == 'yes')
-		echo "<div class='$titlediv'>Feed temporarily unavailable</div>\n";
-	    return;
-	}		
- 
+
+		if (!$feed)
+		{
+		    if ($this->getOption('showFeedNotAvail') === 'yes')
+			echo "<div class='$titlediv'>Feed temporarily unavailable</div>\n";
+		    return;
+		}
+
         // Now insert the newsfeed in your weblog
         // what. 1 Headlines only; headline = link
         //       2 Headlines + link apart
         //       3 Headlines, headline = link + description
         //       4 Headlines, link and description
-	if ($this->getOption(showLogoAndTitle) == "yes")
-	    $i = 0;
-	else {
-	    $i = 1;
-	    $amount = $amount+1;
-	}
- 
-	foreach ( $feed as $feeditem ) {
-	    if ($i <= $amount) {
-		$linkUrl = "<a href=\"".$feeditem[ "link" ]."\"";
-		if (($what % 2) == 1) {
-		    $linkUrl .= " title=\"".stripslashes(htmlspecialchars(strip_tags($feeditem[ "description" ])))."\"";
-		    if ($target <> "" ) {
-			$linkUrl .= " target=\"".$target."\"";
-		    }
-		    $linkUrl .= ">" . stripslashes($feeditem[ "title" ]) ."</a>";
+		if ($this->getOption('showLogoAndTitle') === 'yes')
+		    $i = 0;
+		else {
+		    $i = 1;
+		    $amount = $amount+1;
 		}
-		if (($what % 2) == 0) {
-		    if ($target <> "" ) {
-			$linkUrl .= " target=\"" . $target . "\"";
+
+		foreach ( $feed as $feeditem ) {
+		    if ($i <= $amount) {
+			$linkUrl = '<a href="'.$feeditem['link'].'"';
+			if (($what % 2) == 1) {
+			    $linkUrl .= " title=\"".stripslashes(htmlspecialchars(strip_tags($feeditem[ "description" ])))."\"";
+			    if ($target <> "" ) {
+				$linkUrl .= " target=\"".$target."\"";
+			    }
+			    $linkUrl .= ">" . stripslashes($feeditem[ "title" ]) ."</a>";
+			}
+			if (($what % 2) == 0) {
+			    if ($target <> "" ) {
+				$linkUrl .= " target=\"" . $target . "\"";
+			    }
+			    $linkUrl .= "\">" .$linktext."</a>";
+			}  // well we have the linkUrl at last ;-) all those options make it a mess !!
+	 
+			if ($i == 0 && $feeditem[ "sitetitle"] <> "" )  {
+			    echo "<div class='title'>". stripslashes($feeditem[ "sitetitle" ]) ."</div>";
+			    if ($feeditem[ "url" ] <> "") {
+				echo "<img class=\"centered\" src=\"" . $feeditem[ "url" ] ."\" alt=\"". stripslashes($feeditem[ "sitetitle" ]) . "\" title=\"". stripslashes($feeditem[ "sitetitle" ]) . "\" />";
+			    }
+	 
+			} else if ($what == 1 || $what == 3) {
+			    echo "<div class='$titlediv'>" .$linkUrl."</div>\n";
+			} else {
+			    echo "<div class='$titlediv'>". $feeditem[ "title" ] ."</div>";
+			    echo "<div class='$linkdiv'>" . $linkUrl ."</div>\n";
+			}
+			if ($what == 3 || $what == 4) {
+			    echo "<div class='$descriptiondiv'>"  . stripslashes($feeditem[ "description" ]) . "</div>\n";
+			}
+			$i++;
 		    }
-		    $linkUrl .= "\">" .$linktext."</a>";
-		}  // well we have the linkUrl at last ;-) all those options make it a mess !!
- 
-		if ($i == 0 && $feeditem[ "sitetitle"] <> "" )  {
-		    echo "<div class='title'>". stripslashes($feeditem[ "sitetitle" ]) ."</div>";
-		    if ($feeditem[ "url" ] <> "") {
-			echo "<img class=\"centered\" src=\"" . $feeditem[ "url" ] ."\" alt=\"". stripslashes($feeditem[ "sitetitle" ]) . "\" title=\"". stripslashes($feeditem[ "sitetitle" ]) . "\" />";
-		    }
- 
-		} else if ($what == 1 || $what == 3) {
-		    echo "<div class='$titlediv'>" .$linkUrl."</div>\n";
-		} else {
-		    echo "<div class='$titlediv'>". $feeditem[ "title" ] ."</div>";
-		    echo "<div class='$linkdiv'>" . $linkUrl ."</div>\n";
 		}
-		if ($what == 3 || $what == 4) {
-		    echo "<div class='$descriptiondiv'>"  . stripslashes($feeditem[ "description" ]) . "</div>\n";
-		}
-		$i++;
-	    }
-	}
     }
  
     function isCurrent($filename, $minutes) {
@@ -129,18 +129,18 @@ class NP_NewsFeed extends NucleusPlugin {
 	// which URL to get
 	global $manager, $blog, $saxparser, $CONF, $contents, $cache_age, $cache_time, $cache_path, $last_modified_time, $DIR_MEDIA;
 	// get the cache path
-	$cache_path    = $this->getOption(Cachedir);
-	$cache_time    = $this->getOption(cacheTime);
+	$cache_path    = $this->getOption('Cachedir');
+	$cache_time    = $this->getOption('cacheTime');
 	$feedURL_parts = parse_url($feedURL);
-	$path          = isset($feedURL_parts["path"]) ? $feedURL_parts["path"] : "/";
-	$filename      = isset($feedURL_parts["host"]) ? $feedURL_parts["host"] : "feedfile";
-	$unique        = isset($feedURL_parts["query"]) ? $feedURL_parts["query"] : "";
+	$path          = isset($feedURL_parts['path']) ? $feedURL_parts['path'] : '/';
+	$filename      = isset($feedURL_parts['host']) ? $feedURL_parts['host'] : 'feedfile';
+	$unique        = isset($feedURL_parts['query']) ? $feedURL_parts['query'] : '';
 	$filename      = $filename . $path . $unique;	
-	$filename      = str_replace("/","_",$filename);
+	$filename      = str_replace('/','_',$filename);
 	$filename      = $DIR_MEDIA.$cache_path.$filename;
 	$writedir      = $DIR_MEDIA.$cache_path;
-	$contents      = "";
-	$data          = "";
+	$contents      = '';
+	$data          = '';
  
 	    // create cache dir if non-excistent
         if (!@is_dir($writedir)){
@@ -151,7 +151,7 @@ class NP_NewsFeed extends NucleusPlugin {
 	if (!file_exists($filename)   ||
 		(file_exists($filename) && !$this->isCurrent($filename, $cache_time))) {
  
-	    $tag    = "";
+	    $tag    = '';
 	    $isItem = false;
 	    $i      = 0;
 	    unset($saxparser);
@@ -166,35 +166,35 @@ class NP_NewsFeed extends NucleusPlugin {
 		function sax_start($parser, $name, $attribs) {
 		    global $tag, $isItem, $i, $isChannel;
 		    switch ($name){
-			case "channel":
-			    $i++;
-			$isChannel = true;
-			break;
-			case "item":
-			    $i++;
-			$isItem = true;
-			break;
-			case "image";
-			case "url";
-			case "docs";
-			case "language";
-			case "generator";
-			case "copyright";
-			case "title":
-			case "link":
-			case "pubDate";
-			case "description":
-			case "author";
-			case "category":
-			case "guid":
-			    if ($isItem || $isChannel) $tag = $name;
-			    break;
-			default:
-			    $isItem = false;
-			    $isChannel = false;
-			    break;
-		    }
-		}
+				case 'channel':
+				    $i++;
+				$isChannel = true;
+				break;
+				case 'item':
+				    $i++;
+				$isItem = true;
+				break;
+				case 'image';
+				case 'url';
+				case 'docs';
+				case 'language';
+				case 'generator';
+				case 'copyright';
+				case 'title':
+				case 'link':
+				case 'pubDate';
+				case 'description':
+				case 'author';
+				case 'category':
+				case 'guid':
+				    if ($isItem || $isChannel) $tag = $name;
+				    break;
+				default:
+				    $isItem = false;
+				    $isChannel = false;
+				    break;
+			    }
+			}
 	    }
  
 	    if (!function_exists('sax_end')) {
@@ -205,50 +205,60 @@ class NP_NewsFeed extends NucleusPlugin {
 	    if (!function_exists('sax_data')) {
 		function sax_data($parser, $data) {
 		    global $tag, $isItem, $contents, $isChannel, $i;
+		    
+		    $_ = str_split($contents);
+			
 		    if ($data != "\n" && $isItem) {
-			switch ($tag) {
-			    case "title";
-			    case "link":
-			    case "description":
-				(!isset($contents[$i-1][$tag]) || !strlen($contents[$i-1][$tag])) ?
-				$contents[$i-1][$tag] = addslashes($data) :
-				$contents[$i-1][$tag].= addslashes($data);
-			        break;
-			}
+				switch ($tag) {
+				    case 'title';
+				    case 'link':
+				    case 'description':
+					(!isset($_[$i-1][$tag]) || !strlen($_[$i-1][$tag])) ?
+					$_[$i-1][$tag] = addslashes($data) :
+					$_[$i-1][$tag].= addslashes($data);
+				        break;
+				}
 		    } else if ($data != "\n" && $isChannel) {
-			switch ($tag) {
-			    case "title";
-			        if ($tag == "title") {$tag = "sitetitle";}
-				(!isset($contents[$i-1][$tag]) || !strlen($contents[$i-1][$tag])) ?
-			            $contents[$i-1][$tag] = addslashes($data) :
-			    	    $contents[$i-1][$tag] = addslashes($data);
-				break;
-			    case "url":
-			    case "image":
-			        if ($tag == "title") {$tag = "sitetitle";}
-			        (!isset($contents[$i-1][$tag]) || !strlen($contents[$i-1][$tag])) ?
-			            $contents[$i-1][$tag] = addslashes($data) :
-				    $contents[$i-1][$tag] .= addslashes($data);
-			        break;
-                         }
-                    }
+				switch ($tag) {
+				    case "title";
+				        if ($tag == "title") {
+				        	$tag = "sitetitle";
+				        }
+				        if (!isset($_[$i-1][$tag]) || !strlen($_[$i-1][$tag])) {
+				            $_[$i-1][$tag] = addslashes($data);
+				        } else {
+				    	    $_[$i-1][$tag] = addslashes($data);
+			            }
+						break;
+				    case "url":
+				    case "image":
+				        if ($tag == "title") {
+				        	$tag = "sitetitle";
+				        }
+				        (!isset($_[$i-1][$tag]) || !strlen($_[$i-1][$tag])) ?
+				            $_[$i-1][$tag] = addslashes($data) :
+					    $_[$i-1][$tag] .= addslashes($data);
+				        break;
+				}
+			}
 		}
-	    }
+		$contents = join('',$_);
+    }
  
-	    $fp = fopen($feedURL, "r");
+	    $fp = fopen($feedURL, 'r');
 	    while ($data = fread($fp, 4096)) {
-		$parsedOkay = xml_parse($saxparser, $data, feof($fp));
- 
-		if (!$parsedOkay && xml_get_error_code($saxparser) != XML_ERROR_NONE) {
-		    die("XML Error in File: ".xml_error_string(xml_get_error_code($saxparser)).
-			    " at line ".xml_get_current_line_number($saxparser));
-		}
+			$parsedOkay = xml_parse($saxparser, $data, feof($fp));
+	 
+			if (!$parsedOkay && xml_get_error_code($saxparser) != XML_ERROR_NONE) {
+			    die("XML Error in File: ".xml_error_string(xml_get_error_code($saxparser)).
+				    " at line ".xml_get_current_line_number($saxparser));
+			}
 	    }
  
 	    xml_parser_free($saxparser);
 	    fclose($fp);
  
-	    $cache = @fopen($filename, "w");
+	    $cache = @fopen($filename, 'w');
 	    if ($cache) {
 		fwrite($cache, serialize($contents));
 		fclose($cache);
@@ -267,4 +277,3 @@ class NP_NewsFeed extends NucleusPlugin {
 	return $contents;
     }
 }
-?>
